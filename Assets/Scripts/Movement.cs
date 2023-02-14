@@ -89,9 +89,15 @@ namespace AI
 			}
 		}
 
-		private void OnTriggerStay(Collider other)
+		private void OnTriggerEnter(Collider other)
 		{
 			if (other.CompareTag("Border"))
+			{
+				_nav.isStopped = false;
+				_timerDirection = _timerTotal;
+			}
+
+			if (other.CompareTag("Player"))
 			{
 				_nav.isStopped = false;
 			}
