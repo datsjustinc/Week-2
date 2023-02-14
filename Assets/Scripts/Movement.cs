@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+
 
 namespace AI
 {
@@ -24,16 +23,18 @@ namespace AI
 		// Use this for initialization
 		void Start()
 		{
-			_anim = GetComponent<Animator>();
+			_body = gameObject.GetComponent<Transform>();
+			_anim = gameObject.GetComponent<Animator>();
 			_camera = Camera.main.transform;
-			_nav = GetComponent<NavMeshAgent>();
+			_nav = gameObject.GetComponent<NavMeshAgent>();
 			ResetMoveTimer();
 		}
 
 		void ResetMoveTimer()
 		{
 			_moveTimer = 0;
-			_moveTimerTotal = Random.Range(1.1f, 3.3f);
+			_moveTimerTotal = Random.Range(1f, 6f);
+			_nav.speed = Random.Range(0, 5);
 		}
 
 		// Update is called once per frame
@@ -44,9 +45,7 @@ namespace AI
 			{
 				ResetMoveTimer();
 				_nav.isStopped = false;
-				
-				_nav.SetDestination(transform.position + new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)));
-				_nav.speed = 3;
+				_nav.SetDestination(transform.position + new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20)));
 			}
 			else
 			{
@@ -60,7 +59,7 @@ namespace AI
 			else
 			{
 				_anim.SetBool("isWalking", true);
-				_anim.SetFloat("Velocity", _nav.velocity.magnitude);
+				_anim.SetFloat("Velocity", Mathf.Clamp(_nav.velocity.magnitude, _nav.speed, _nav.speed));
 			}
 
 			//Direction Change Detection
@@ -92,8 +91,9 @@ namespace AI
 
 		private void OnTriggerStay(Collider other)
 		{
-			if (other.CompareTag("Booth_Food"))
+			if (other.CompareTag("Border"))
 			{
+				_nav.isStopped = false;
 			}
 
 		}
